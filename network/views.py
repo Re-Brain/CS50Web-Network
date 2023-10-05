@@ -9,7 +9,8 @@ from .models import *
 
 def index(request):
     posts = Post.objects.all()
-    return render(request, "network/index.html" , {"posts" : posts })
+    likes = Post.objects.values("like").count()
+    return render(request, "network/index.html" , {"posts" : posts , "likes" : likes })
 
 def login_view(request):
     if request.method == "POST":
