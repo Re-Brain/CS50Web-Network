@@ -9,6 +9,7 @@ class User(AbstractUser):
 
 class Post(models.Model):
     id = models.AutoField(primary_key=True)
+    user = models.ForeignKey("User", related_name="post_creator", on_delete=models.CASCADE , blank=True, null=True)
     text = models.TextField(blank=True)
     time = models.DateTimeField(auto_now_add=True)
     like = models.ManyToManyField("User", related_name="liker", null=True, blank=True)
