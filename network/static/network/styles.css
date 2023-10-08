@@ -131,39 +131,83 @@ table {
 }
 
 /* index.html */
-#allPost {
+main {
+  padding: 2%;
   margin: 0 auto;
   display: flex;
-  padding: 3%;
   flex-direction: column;
-  align-items: center
+  align-items: center;
 }
 
-.post
-{
-    border: 1px solid black;
-    background-color: lightblue;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    width: 75%;
-    height: 100%;
-    padding: 20px;
+#newPost {
+  width: 75%;
+  height: auto;
+  border: 1px solid black;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  padding: 20px;
 }
 
-.post-user
+#newPost > form
 {
-    font-size: 20px;
+   display: flex;
+   flex-direction: column;
+}
+
+#newPost .form-header
+{
+    margin-bottom: 15px;
     font-weight: bold;
-    margin-bottom: 15px; 
+    font-size: 20px;
 }
 
-.post-element
+#newPost .form-element
 {
-    padding: 5px 0;
+    margin-bottom: 5px;
 }
 
-.post-time
+#newPost input[type="submit"]
 {
-    color: gray
+    width: 5%;
+    padding: 5px;
+    border-radius: 5px;
+    border: none;
+    background-color: lightblue;
 }
 
+#newPost textarea
+{
+    resize: none;
+}
+
+#allPost {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: auto;
+}
+
+.post {
+  border: 1px solid black;
+  background-color: lightblue;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  width: 75%;
+  height: 100%;
+  padding: 20px;
+}
+
+.post-user {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.post-element {
+  padding: 5px 0;
+}
+
+.post-time {
+  color: gray;
+}
