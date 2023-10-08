@@ -59,14 +59,10 @@ function load_post(post_cat) {
         container.appendChild(time);
         container.appendChild(like);
 
-        document.querySelector("#allPost").append(container);
+        document.querySelector("#display").append(container);
       }
     });
 }
 
-// setInterval(function()
-// {
-    document.querySelector("#allPost").innerHTML = "";
-    load_post("all")
-// }, 1000);
+
 
