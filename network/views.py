@@ -4,12 +4,13 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import *
 
 
 def index(request):
-    return render(request, "network/index.html")
-
+    posts = Post.objects.all()
+    likes = Post.objects.values("like").count()
+    return render(request, "network/index.html" , {"posts" : posts , "likes" : likes })
 
 def login_view(request):
     if request.method == "POST":

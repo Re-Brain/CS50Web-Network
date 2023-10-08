@@ -1,5 +1,15 @@
-{% extends "network/layout.html" %}
+{% extends "network/layout.html" %} 
 
 {% block body %}
-    TODO
+<div id="allPost"">
+  {% for post in posts %}
+  <div class="post">
+    <p class="post-user">{{ post.user }}</p>
+    <p class="post-time post-element">{{ post.time }}</p>
+    <p class="post-text post-element">{{ post.text }}</p>
+    <p class="post-like post-element">{{ post.like.all.count }}</p>
+  </div>
+  {% endfor %}
+</div>
+
 {% endblock %}
