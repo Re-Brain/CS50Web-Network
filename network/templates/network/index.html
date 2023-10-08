@@ -1,11 +1,13 @@
-{% extends "network/layout.html" %} {% block body %}
-<div id="allPost" style="padding: 20px">
+{% extends "network/layout.html" %} 
+
+{% block body %}
+<div id="allPost"">
   {% for post in posts %}
   <div class="post">
-    <h3>{{ post.user }}</h3>
-    <p>{{ post.time }}</p>
-    <p>{{ post.text }}</p>
-    <p>{{ post.like.all.count }}</p>
+    <p class="post-user">{{ post.user }}</p>
+    <p class="post-time post-element">{{ post.time }}</p>
+    <p class="post-text post-element">{{ post.text }}</p>
+    <p class="post-like post-element">{{ post.like.all.count }}</p>
   </div>
   {% endfor %}
 </div>
