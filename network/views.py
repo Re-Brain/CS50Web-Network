@@ -1,16 +1,44 @@
-from django.contrib.auth import authenticate, login, logout
-from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+import json
 from django.shortcuts import render
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError
+from django.http import JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import *
 
-
 def index(request):
-    posts = Post.objects.all()
-    likes = Post.objects.values("like").count()
-    return render(request, "network/index.html" , {"posts" : posts , "likes" : likes })
+    return render(request, "network/index.html")
+
+def load(request, post_cat):
+    if post_cat == "all":
+        posts = Post.objects.all()
+    else:
+        return JsonResponse({"error": "Invalid mailbox."}, status=400)
+    
+    # return emails in reverse chronological order
+    posts = posts.order_by("-time").all()
+    return JsonResponse([post.serialize() for post in posts], safe=False)
+
+@csrf_exempt
+@login_required
+def create(request):
+    # Composing a new email must be via POST
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+
+    # Get the data from the request
+    data = json.loads(request.body)
+    text = data.get("text")
+    user = data.get("user")
+
+    post = Post(user=User.objects.get(id=user), text=text)
+    post.save()
+
+    return JsonResponse({"message": "Post created successfully."}, status=201)
 
 def login_view(request):
     if request.method == "POST":

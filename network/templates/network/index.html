@@ -1,15 +1,24 @@
 {% extends "network/layout.html" %} 
+{% load static %}
 
 {% block body %}
-<div id="allPost"">
-  {% for post in posts %}
-  <div class="post">
-    <p class="post-user">{{ post.user }}</p>
-    <p class="post-time post-element">{{ post.time }}</p>
-    <p class="post-text post-element">{{ post.text }}</p>
-    <p class="post-like post-element">{{ post.like.all.count }}</p>
-  </div>
-  {% endfor %}
-</div>
+<h1 id="title"></h1>
+<main>
+    <div id="newPost"">
+        <form id="form">
+            <h3 class="form-header">New Post</h3>
+            <textarea class="form-element" id="form-text" cols="30" rows="10"></textarea>
+            <input type="hidden" id="form-user" value="{{ user.id }}">
+            <input class="form-element" type="submit" value="Post">
+        </form>
+    </div>
+
+    <div id="display"">
+    </div>
+</main>
+
 
 {% endblock %}
+{% block script %}
+    <script src="{% static 'network/index.js' %}"></script>
+{% endblock%}
