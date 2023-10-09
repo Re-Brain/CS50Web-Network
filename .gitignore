@@ -1,2 +1,2 @@
-network/__pycache__/
+network/__pycache__/*.pyc
 *.dbsqlite3
