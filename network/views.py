@@ -16,9 +16,10 @@ def index(request):
 def following(request):
     return render(request, "network/following.html")
 
-def profile(request):
-    data = User.objects.filter(id=request.user.id)
-    return render(request, "network/profile.html", {"data" : data})
+def profile(request, id):
+    data = User.objects.get(id=id)
+    posts = Post.objects.filter(user=id)
+    return render(request, "network/profile.html", {"data" : data, "posts" : posts})
 
 def load(request, post_cat):
     print(post_cat)
