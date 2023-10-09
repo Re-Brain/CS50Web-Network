@@ -13,9 +13,16 @@ from .models import *
 def index(request):
     return render(request, "network/index.html")
 
+def following(request):
+    return render(request, "network/following.html")
+
 def load(request, post_cat):
+    print(post_cat)
     if post_cat == "all":
         posts = Post.objects.all()
+    elif post_cat == "following":
+        followers = User.objects.filter(id=request.user.id).values('following')
+        posts = Post.objects.filter(user__in = followers)
     else:
         return JsonResponse({"error": "Invalid mailbox."}, status=400)
     
