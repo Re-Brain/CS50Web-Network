@@ -130,8 +130,8 @@ table {
   border-spacing: 0;
 }
 
-/* index.html */
-main {
+/* index.html && following.html*/
+#list {
   padding: 2%;
   margin: 0 auto;
   display: flex;
