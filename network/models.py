@@ -18,6 +18,7 @@ class Post(models.Model):
         return {
             "id" : self.id,
             "user" : self.user.username,
+            "user_id" : self.user.id,
             "text" : self.text,
             "time" : self.time.strftime("%b %d %Y, %I:%M %p"),
             "like" : self.like.count()
