@@ -46,14 +46,6 @@ def change_follow(request, profile_id, user_id):
 
 @csrf_exempt
 def load_profile(request, id):
-    # if (request.method == "PUT"):
-    #     data = json.loads(request.body)
-    #     if data.get("follower") is not None:
-    #         user = User.objects.get(id=id)
-    #         user.follower.set(data.get("follower"))
-    #         user.save()
-    #         return HttpResponse(status=204)
-
     user = User.objects.get(id=id)
     return JsonResponse(user.serialize(), safe=False)
 
