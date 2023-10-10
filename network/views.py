@@ -57,6 +57,8 @@ def load_post(request, post_cat):
     elif post_cat == "following":
         followers = User.objects.filter(id=request.user.id).values('following')
         posts = Post.objects.filter(user__in=followers)
+    elif int(post_cat):
+        posts = Post.objects.filter(user=int(post_cat))
     else:
         return JsonResponse({"error": "Invalid mailbox."}, status=400)
 

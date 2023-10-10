@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .addEventListener("click", change_follow);
   }
   load_follow();
+  load_post();
 });
 
 function change_follow() {
@@ -71,6 +72,45 @@ function load_follow() {
           console.log("Follow");
           document.querySelector("#follow_status").innerHTML = "Follow";
         }
+      }
+    });
+}
+
+function load_post() {
+  const data = document.getElementById("username").getAttribute("data-info");
+  const values = data.split("|");
+  const profileID = parseInt(values[0], 10);
+  const userID = parseInt(values[1], 10);
+
+  fetch(`/posts/${profileID}`)
+    .then((response) => response.json())
+    .then((posts) => {
+      for (const post of posts) {
+        const container = document.createElement("div");
+        container.className = "post";
+
+        const header = document.createElement("p");
+        header.className = "post-header";
+        header.innerHTML = post.user;
+
+        const time = document.createElement("p");
+        time.className = "post-element post-time";
+        time.innerHTML = post.time;
+
+        const text = document.createElement("p");
+        text.className = "post-element";
+        text.innerHTML = post.text;
+
+        const like = document.createElement("p");
+        like.className = "post-element";
+        like.innerHTML = post.like;
+
+        container.appendChild(header);
+        container.appendChild(text);
+        container.appendChild(time);
+        container.appendChild(like);
+
+        document.querySelector("#display").append(container);
       }
     });
 }
