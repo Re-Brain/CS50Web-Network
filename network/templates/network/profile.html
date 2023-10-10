@@ -2,13 +2,16 @@
 {% load static %}
 
 {% block body %}
-<main id="profile"> 
+<main id="list"> 
     <div id="info"">
-        <h1 id="username">{{ data.username }}</h1>
+        <h1 id="username" data-info="{{data.id}}|{{user.id}}">{{ data.username }}</h1>
         <div id="followContainer">
-            <h2 class="follow">{{ data.follower.count }}</h2>
-            <h2 class="follow">{{ data.following.count }}</h2>
+            <h2 class="follow" id="follower_status"></h2>
+            <h2 class="follow" id="following_status"></h2>
         </div>
+        {% if user != data %}
+            <button class="status" id="follow_status"></button>
+        {% endif %}
     </div>
     <div id="display">
         {% for post in posts %}
@@ -24,4 +27,5 @@
 {% endblock %}
 
 {% block script %}
+    <script src="{% static 'network/profile.js' %}"></script>
 {% endblock%}
