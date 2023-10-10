@@ -10,29 +10,68 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .models import *
 
+
 def index(request):
     return render(request, "network/index.html")
+
 
 def following(request):
     return render(request, "network/following.html")
 
-def profile(request):
-    data = User.objects.filter(id=request.user.id)
-    return render(request, "network/profile.html", {"data" : data})
 
-def load(request, post_cat):
-    print(post_cat)
+def profile(request, id):
+    data = User.objects.get(id=id)
+    posts = Post.objects.filter(user=id).order_by('-time')
+    return render(request, "network/profile.html", {"data": data, "posts": posts})
+
+
+@csrf_exempt
+def change_follow(request, profile_id, user_id):
+    if (request.method == "PUT"):
+        data = json.loads(request.body)
+        print(data)
+
+        profile = User.objects.get(id=profile_id)
+        user = User.objects.get(id=user_id)
+
+        profile.follower.set(data.get("profile_follower"))
+        user.following.set(data.get("user_following"))
+
+        profile.save()
+        user.save()
+
+        return HttpResponse(status=204)
+
+    return JsonResponse({"error": "Invalid status."}, status=400)
+
+@csrf_exempt
+def load_profile(request, id):
+    # if (request.method == "PUT"):
+    #     data = json.loads(request.body)
+    #     if data.get("follower") is not None:
+    #         user = User.objects.get(id=id)
+    #         user.follower.set(data.get("follower"))
+    #         user.save()
+    #         return HttpResponse(status=204)
+
+    user = User.objects.get(id=id)
+    return JsonResponse(user.serialize(), safe=False)
+
+
+@csrf_exempt
+def load_post(request, post_cat):
     if post_cat == "all":
         posts = Post.objects.all()
     elif post_cat == "following":
         followers = User.objects.filter(id=request.user.id).values('following')
-        posts = Post.objects.filter(user__in = followers)
+        posts = Post.objects.filter(user__in=followers)
     else:
         return JsonResponse({"error": "Invalid mailbox."}, status=400)
-    
+
     # return emails in reverse chronological order
     posts = posts.order_by("-time").all()
     return JsonResponse([post.serialize() for post in posts], safe=False)
+
 
 @csrf_exempt
 @login_required
@@ -50,6 +89,7 @@ def create(request):
     post.save()
 
     return JsonResponse({"message": "Post created successfully."}, status=201)
+
 
 def login_view(request):
     if request.method == "POST":

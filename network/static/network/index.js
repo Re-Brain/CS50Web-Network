@@ -33,8 +33,9 @@ function load_post(post_cat) {
         const container = document.createElement("div");
         container.className = "post";
 
-        const header = document.createElement("p");
+        const header = document.createElement("a");
         header.className = "post-header";
+        header.href = `/profile/${post.user_id}`
         header.innerHTML = post.user;
 
         const time = document.createElement("p");

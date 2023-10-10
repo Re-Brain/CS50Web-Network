@@ -1,0 +1,31 @@
+{% extends "network/layout.html" %} 
+{% load static %}
+
+{% block body %}
+<main id="list"> 
+    <div id="info"">
+        <h1 id="username" data-info="{{data.id}}|{{user.id}}">{{ data.username }}</h1>
+        <div id="followContainer">
+            <h2 class="follow" id="follower_status"></h2>
+            <h2 class="follow" id="following_status"></h2>
+        </div>
+        {% if user != data %}
+            <button class="status" id="follow_status"></button>
+        {% endif %}
+    </div>
+    <div id="display">
+        {% for post in posts %}
+            <div class="post">
+                <p class="post-header">{{ post.user }}</p>
+                <p class="post-element post-time">{{ post.time }}</p>
+                <p class="post-element">{{ post.text }}</p>
+                <p class="post-element">{{ post.like.count }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</main>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/profile.js' %}"></script>
+{% endblock%}
