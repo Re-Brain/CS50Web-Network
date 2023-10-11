@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .querySelector("#follow_status")
       .addEventListener("click", change_follow);
   }
+
   load_follow();
   load_post();
 });
@@ -94,18 +95,28 @@ function load_post() {
         header.innerHTML = post.user;
 
         const time = document.createElement("p");
-        time.className = "post-element post-time";
+        time.className = "post-element";
         time.innerHTML = post.time;
 
         const text = document.createElement("p");
-        text.className = "post-element";
+        text.className = `post-element`;
+        text.id = `post-text-${post.id}`;
         text.innerHTML = post.text;
 
         const like = document.createElement("p");
         like.className = "post-element";
         like.innerHTML = post.like;
 
+        // Follow the chatgpt new code next time
+
+        const button = document.createElement("button");
+        button.className = "edit-button";
+        button.innerHTML = "Edit";
+        button.id = `post-button-${post.id}`;
+        button.addEventListener("click", () => editPost(post.id));
+
         container.appendChild(header);
+        container.appendChild(button);
         container.appendChild(text);
         container.appendChild(time);
         container.appendChild(like);
@@ -113,4 +124,62 @@ function load_post() {
         document.querySelector("#display").append(container);
       }
     });
+}
+
+function editPost(post_id) {
+  const newElement = document.createElement("textarea");
+  const oldElement = document.getElementById(`post-text-${post_id}`);
+  const button = document.getElementById(`post-button-${post_id}`);
+  const newButton = document.createElement("button");
+
+  newElement.value = oldElement.innerHTML;
+  newElement.id = `post-textarea-${post_id}`;
+  newElement.className = "textarea";
+
+  newButton.innerHTML = "Save";
+  newButton.id = `post-save-${post_id}`;
+  newButton.className = "save-button";
+  newButton.addEventListener("click", () =>
+    savePost(post_id, newElement.value)
+  );
+
+  oldElement.parentNode.replaceChild(newElement, oldElement);
+  button.remove();
+  newElement.parentElement.insertBefore(newButton, newElement.nextSibling);
+
+  const buttons = document.getElementsByClassName("edit-button");
+  for (const button of buttons) {
+    button.disabled = true;
+  }
+}
+
+function savePost(post_id, text) {
+  fetch(`/edit/${post_id}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      text: text,
+    }),
+  });
+
+  const textArea = document.getElementById(`post-textarea-${post_id}`);
+  const saveButton = document.getElementById(`post-save-${post_id}`);
+
+  const editButton = document.createElement("button");
+  editButton.className = "edit";
+  editButton.id = "post-button-${post.id}";
+  editButton.innerHTML = "Edit";
+  editButton.addEventListener("click", () => editPost(post_id));
+
+  const post_text = document.createElement("p");
+  post_text.className = `post-element`;
+  post_text.id = `post-text-${post_id}`;
+  post_text.innerHTML = text;
+
+  textArea.parentNode.replaceChild(editButton, textArea);
+  saveButton.parentNode.replaceChild(post_text, saveButton);
+
+  const buttons = document.getElementsByClassName("edit-button");
+  for (const button of buttons) {
+    button.disabled = false;
+  }
 }

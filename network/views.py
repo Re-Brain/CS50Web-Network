@@ -12,11 +12,15 @@ from .models import *
 
 
 def index(request):
-    return render(request, "network/index.html")
+    data = User.objects.get(id=request.user.id)
+    posts = Post.objects.filter(user=request.user).order_by('-time')
+    return render(request, "network/index.html", {"data": data, "posts": posts})
 
 
 def following(request):
-    return render(request, "network/following.html")
+    data = User.objects.get(id=request.user.id)
+    posts = Post.objects.filter(user=request.user).order_by('-time')
+    return render(request, "network/following.html.", {"data": data, "posts": posts})
 
 
 def profile(request, id):
@@ -44,6 +48,20 @@ def change_follow(request, profile_id, user_id):
 
     return JsonResponse({"error": "Invalid status."}, status=400)
 
+
+@csrf_exempt
+def edit_post(request, id):
+    post = Post.objects.get(id=id)
+    data = json.loads(request.body)
+
+    print(data)
+
+    post.text = data.get("text")
+    post.save()
+
+    return HttpResponse(status=204)
+
+
 @csrf_exempt
 def load_profile(request, id):
     user = User.objects.get(id=id)
@@ -52,6 +70,7 @@ def load_profile(request, id):
 
 @csrf_exempt
 def load_post(request, post_cat):
+    print(post_cat)
     if post_cat == "all":
         posts = Post.objects.all()
     elif post_cat == "following":
