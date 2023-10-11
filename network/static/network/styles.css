@@ -179,6 +179,7 @@ table {
 #newPost textarea
 {
     resize: none;
+    border-radius: 10px;
 }
 
 #display {
@@ -197,6 +198,8 @@ table {
   width: 75%;
   height: 100%;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .post-header {
@@ -209,11 +212,35 @@ table {
   padding: 5px 0;
 }
 
+.edit-button
+{
+  width: 5%;
+  border-radius: 5px;
+  border: none;
+  background-color: lightgreen;
+  margin-bottom: 5px;
+}
+
+.textarea
+{
+  margin-bottom: 5px;
+  border-radius: 10px;
+  resize: none;
+}
+
+.save-button
+{
+  width: 5%;
+  border-radius: 5px;
+  border: none;
+  background-color: lightgreen;
+  margin-bottom: 5px;
+  padding: 5px;
+}
+
 .post-time {
   color: gray;
 }
-
-/* profile.html */
 
 #info
 {

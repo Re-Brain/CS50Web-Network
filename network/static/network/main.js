@@ -89,7 +89,7 @@ function load_post(post_cat) {
       like.innerHTML = post.like;
 
       const button = document.createElement("button");
-      button.className = "edit-button";
+      button.className = "edit-button post-element";
       button.innerHTML = "Edit";
       button.id = `post-button-${post.id}`;
       button.addEventListener("click", () => editPost(post.id));
@@ -146,7 +146,7 @@ function savePost(post_id, text) {
   const saveButton = document.getElementById(`post-save-${post_id}`);
 
   const editButton = document.createElement("button");
-  editButton.className = "edit";
+  editButton.className = "edit-button post-element";
   editButton.id = "post-button-${post.id}";
   editButton.innerHTML = "Edit";
   editButton.addEventListener("click", () => editPost(post_id));
