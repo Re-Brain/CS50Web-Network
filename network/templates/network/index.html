@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block body %}
-<h1 class="title">All Post</h1>
+<h1 class="title" data-page="index" id="title">All Post</h1>
 <main id="list">
     <div id="newPost"">
         <form id="form">
@@ -20,5 +20,5 @@
 
 {% endblock %}
 {% block script %}
-    <script src="{% static 'network/index.js' %}"></script>
+    <script src="{% static 'network/main.js' %}"></script>
 {% endblock%}

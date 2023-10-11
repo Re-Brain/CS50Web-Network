@@ -18,11 +18,10 @@ function create_post(event) {
     .then((response) => response.json())
     .then((result) => {
       console.log(result);
+      document.querySelector("#form-text").value = "";
+      document.querySelector("#display").innerHTML = "";
+      load_post("all");
     });
-
-  document.querySelector("#form-text").value = "";
-  document.querySelector("#allPost").innerHTML = "";
-  load_post("all");
 }
 
 function load_post(post_cat) {
@@ -31,11 +30,12 @@ function load_post(post_cat) {
   const profileID = parseInt(values[0], 10);
   const userID = parseInt(values[1], 10);
 
-  console.log(profileID, userID);
+  console.log("Post was loaded");
 
   fetch(`/posts/${post_cat}`)
     .then((response) => response.json())
     .then((posts) => {
+  
       for (const post of posts) {
         const container = document.createElement("div");
         container.className = "post";
@@ -58,19 +58,21 @@ function load_post(post_cat) {
         like.className = "post-element";
         like.innerHTML = post.like;
 
-        const button = document.createElement("button");
-        button.className = "edit-button";
-        button.innerHTML = "Edit";
-        button.id = `post-button-${post.id}`;
-        button.addEventListener("click", () => editPost(post.id));
+        // const button = document.createElement("button");
+        // button.className = "edit-button";
+        // button.innerHTML = "Edit";
+        // button.id = `post-button-${post.id}`;
+        // button.addEventListener("click", () => editPost(post.id));
 
         container.appendChild(header);
-        if (post.user_id == userID) {
-          container.appendChild(button);
-        }
+        // if (post.user_id == userID) {
+        //   container.appendChild(button);
+        // }
         container.appendChild(text);
         container.appendChild(time);
         container.appendChild(like);
+
+        console.log(container)
 
         document.querySelector("#display").append(container);
       }
