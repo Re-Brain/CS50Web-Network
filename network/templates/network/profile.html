@@ -14,18 +14,10 @@
         {% endif %}
     </div>
     <div id="display">
-        {% for post in posts %}
-            <div class="post">
-                <p class="post-header">{{ post.user }}</p>
-                <p class="post-element post-time">{{ post.time }}</p>
-                <p class="post-element">{{ post.text }}</p>
-                <p class="post-element">{{ post.like.count }}</p>
-            </div>
-        {% endfor %}
     </div>
 </main>
 {% endblock %}
 
 {% block script %}
-    <script src="{% static 'network/profile.js' %}"></script>
+    <script src="{% static 'network/main.js' %}"></script>
 {% endblock%}

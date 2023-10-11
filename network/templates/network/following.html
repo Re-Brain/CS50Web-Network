@@ -2,13 +2,14 @@
 {% load static %}
 
 {% block body %}
+<h1 class="title" data-page="following" id="title">Following</h1>
 <main id="list"> 
-    <div id="display"">
+    <div id="display">
     </div>
 </main>
 
 
 {% endblock %}
 {% block script %}
-    <script src="{% static 'network/following.js' %}"></script>
+    <script src="{% static 'network/main.js' %}"></script>
 {% endblock%}
