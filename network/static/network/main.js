@@ -85,21 +85,34 @@ function load_post(post_cat) {
       text.innerHTML = post.text;
 
       const like = document.createElement("p");
+      like.id = `like-count-${post.id}`;
       like.className = "post-element";
-      like.innerHTML = post.like;
+      likeCount(post.id).then((result) => (like.innerHTML = result));
 
-      const button = document.createElement("button");
-      button.className = "edit-button post-element";
-      button.innerHTML = "Edit";
-      button.id = `post-button-${post.id}`;
-      button.addEventListener("click", () => editPost(post.id));
+      async () => {
+        const likeNum = await likeCount(post.id);
+        like.innerHTML = likeNum;
+      };
+
+      const likeButton = document.createElement("i");
+      likeButton.className = likeStatus(post.like, userID);
+      likeButton.addEventListener("click", () =>
+        likeChange(post.like, userID, post.id)
+      );
+
+      const editButton = document.createElement("button");
+      editButton.className = "edit-button post-element";
+      editButton.innerHTML = "Edit";
+      editButton.id = `post-button-${post.id}`;
+      editButton.addEventListener("click", () => editPost(post.id));
 
       container.appendChild(header);
       if (post.user_id == userID) {
-        container.appendChild(button);
+        container.appendChild(editButton);
       }
       container.appendChild(text);
       container.appendChild(time);
+      container.appendChild(likeButton);
       container.appendChild(like);
 
       document.querySelector("#display").append(container);
@@ -147,7 +160,7 @@ function savePost(post_id, text) {
 
   const editButton = document.createElement("button");
   editButton.className = "edit-button post-element";
-  editButton.id = "post-button-${post.id}";
+  editButton.id = `post-button-${post.id}`;
   editButton.innerHTML = "Edit";
   editButton.addEventListener("click", () => editPost(post_id));
 
@@ -231,4 +244,40 @@ function load_follow() {
         }
       }
     });
+}
+
+async function likeCount(post_id) {
+  const response = await fetch(`/post/${post_id}`);
+  const result = await response.json();
+  return result.like_count;
+}
+
+function likeStatus(like_list, user_id) {
+  if (like_list.includes(user_id)) {
+    return "fa-solid fa-heart";
+  }
+  return "fa-regular fa-heart";
+}
+
+function likeChange(like_list, user_id, post_id) {
+  let likes;
+  if (like_list.includes(user_id)) {
+    likes = like_list.filter((like) => like !== user_id);
+  } else {
+    like_list.push(user_id);
+    likes = like_list;
+  }
+
+  fetch("/like/", {
+    method: "PUT",
+    body: JSON.stringify({
+      like_list: likes,
+      post_id: post_id,
+    }),
+  }).then(() => {
+    const likeNum = likes.length;
+    document.getElementById(`like-count-${post_id}`).innerHTML = likeNum;
+
+    likeStatus(like_list, user_id);
+  });
 }

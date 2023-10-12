@@ -30,5 +30,6 @@ class Post(models.Model):
             "user_id" : self.user.id,
             "text" : self.text,
             "time" : self.time.strftime("%b %d %Y, %I:%M %p"),
-            "like" : self.like.count()
+            "like" : [user.id for user in self.like.all()],
+            "like_count" : self.like.count()
         }

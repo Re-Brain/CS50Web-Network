@@ -30,6 +30,22 @@ def profile(request, id):
 
 
 @csrf_exempt
+def change_like(request):
+    if (request.method == "PUT"):
+        data = json.loads(request.body)
+
+        like_list = data.get("like_list")
+        post_id = data.get("post_id")
+
+        post = Post.objects.get(id=post_id)
+        post.like.set(like_list)
+
+        post.save()
+
+        return HttpResponse(status=204)
+
+
+@csrf_exempt
 def change_follow(request, profile_id, user_id):
     if (request.method == "PUT"):
         data = json.loads(request.body)
@@ -48,6 +64,11 @@ def change_follow(request, profile_id, user_id):
 
     return JsonResponse({"error": "Invalid status."}, status=400)
 
+
+@csrf_exempt
+def post_id(request, id):
+    post = Post.objects.get(id=id)
+    return JsonResponse(post.serialize(), safe=False)
 
 @csrf_exempt
 def edit_post(request, id):
