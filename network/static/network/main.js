@@ -87,18 +87,16 @@ function load_post(post_cat) {
       const like = document.createElement("p");
       like.id = `like-count-${post.id}`;
       like.className = "post-element";
-      likeCount(post.id).then((result) => (like.innerHTML = result));
-
-      async () => {
-        const likeNum = await likeCount(post.id);
-        like.innerHTML = likeNum;
-      };
+      like.innerHTML = post.like_count;
 
       const likeButton = document.createElement("i");
-      likeButton.className = likeStatus(post.like, userID);
-      likeButton.addEventListener("click", () =>
-        likeChange(post.like, userID, post.id)
-      );
+      likeButton.className = post.like.includes(userID)
+        ? "fa-solid fa-heart"
+        : "fa-regular fa-heart";
+      likeButton.id = `like-button-${post.id}`;
+      likeButton.addEventListener("click", () => {
+        likeChange(userID, post.id);
+      });
 
       const editButton = document.createElement("button");
       editButton.className = "edit-button post-element";
@@ -246,26 +244,17 @@ function load_follow() {
     });
 }
 
-async function likeCount(post_id) {
-  const response = await fetch(`/post/${post_id}`);
-  const result = await response.json();
-  return result.like_count;
-}
+async function likeChange(user_id, post_id) {
+  const post = await fetch(`/post/${post_id}`);
+  const result = await post.json();
 
-function likeStatus(like_list, user_id) {
-  if (like_list.includes(user_id)) {
-    return "fa-solid fa-heart";
-  }
-  return "fa-regular fa-heart";
-}
-
-function likeChange(like_list, user_id, post_id) {
-  let likes;
-  if (like_list.includes(user_id)) {
-    likes = like_list.filter((like) => like !== user_id);
+  if (result.like.includes(user_id)) {
+    likes = result.like.filter((like) => like !== user_id);
+    console.log("1");
   } else {
-    like_list.push(user_id);
-    likes = like_list;
+    likes = result.like;
+    likes.push(user_id);
+    console.log("0");
   }
 
   fetch("/like/", {
@@ -275,9 +264,17 @@ function likeChange(like_list, user_id, post_id) {
       post_id: post_id,
     }),
   }).then(() => {
-    const likeNum = likes.length;
-    document.getElementById(`like-count-${post_id}`).innerHTML = likeNum;
+    document.getElementById(`like-count-${post_id}`).innerHTML = likes.length;
 
-    likeStatus(like_list, user_id);
+    let appearance = document.getElementById(
+      `like-button-${post_id}`
+    ).className;
+    if (appearance == "fa-regular fa-heart") {
+      document.getElementById(`like-button-${post_id}`).className =
+        "fa-solid fa-heart";
+    } else {
+      document.getElementById(`like-button-${post_id}`).className =
+        "fa-regular fa-heart";
+    }
   });
 }

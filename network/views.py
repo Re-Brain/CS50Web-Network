@@ -37,6 +37,8 @@ def change_like(request):
         like_list = data.get("like_list")
         post_id = data.get("post_id")
 
+        print(like_list)
+
         post = Post.objects.get(id=post_id)
         post.like.set(like_list)
 
@@ -69,6 +71,7 @@ def change_follow(request, profile_id, user_id):
 def post_id(request, id):
     post = Post.objects.get(id=id)
     return JsonResponse(post.serialize(), safe=False)
+
 
 @csrf_exempt
 def edit_post(request, id):
