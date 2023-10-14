@@ -6,27 +6,50 @@ from django.db import IntegrityError
 from django.http import JsonResponse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from django.contrib.auth.models import AnonymousUser
+from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import *
 
 
 def index(request):
+    posts = Post.objects.all()
+    posts = posts.order_by("-time").all()
+
+    paginator = Paginator(posts, 2)
+    page_number = request.GET.get('page')
+    venues = paginator.get_page(page_number)
+
     if (request.user.is_authenticated):
         data = User.objects.get(id=request.user.id)
-        return render(request, "network/index.html", {"data": data})
+        return render(request, "network/index.html", {"data": data, "venues": venues})
 
-    return render(request, "network/index.html")
+    return render(request, "network/index.html", {"posts": posts, "venues": venues})
 
 
 def following(request):
-    return render(request, "network/following.html.")
+    followers = User.objects.filter(id=request.user.id).values('following')
+    posts = Post.objects.filter(user__in=followers)
+    posts = posts.order_by("-time").all()
+
+    paginator = Paginator(posts, 2)
+    page_number = request.GET.get('page')
+    venues = paginator.get_page(page_number)
+
+    data = User.objects.get(id=request.user.id)
+    return render(request, "network/following.html.", {"data": data, "posts": posts, "venues": venues})
 
 
 def profile(request, id):
     data = User.objects.get(id=id)
-    return render(request, "network/profile.html", {"data": data})
+    posts = Post.objects.filter(user=id)
+    posts = posts.order_by("-time").all()
+
+    paginator = Paginator(posts, 2)
+    page_number = request.GET.get('page')
+    venues = paginator.get_page(page_number)
+
+    return render(request, "network/profile.html", {"data": data, "posts": posts, "venues": venues})
 
 
 @csrf_exempt

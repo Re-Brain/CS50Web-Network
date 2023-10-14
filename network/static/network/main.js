@@ -9,16 +9,49 @@ document.addEventListener("DOMContentLoaded", function () {
       .addEventListener("click", change_follow);
   }
 
-  if (document.getElementById("title")) {
-    if (document.getElementById("title").getAttribute("data-page") == "index") {
-      load_post("all");
-    } else {
-      load_post("following");
-    }
+  const editButtons = document.querySelectorAll(".edit-button");
+
+  editButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const editID = button.getAttribute("data-edit-id");
+      editPost(editID);
+    });
+  });
+
+  const likeButtons = document.querySelectorAll(".like-button");
+
+  if (
+    document.getElementById("display").getAttribute("data-info") === "|None"
+  ) {
+    likeButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        return (window.location.href = "login");
+      });
+    });
   } else {
-    load_follow();
-    load_post("id");
+    likeButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const likeID = button.getAttribute("data-like-id").split("|");
+        likeChange(parseInt(likeID[0], 10), parseInt(likeID[1], 10));
+      });
+    });
   }
+
+  if(document.getElementById("title") == null)
+  {
+    load_follow();
+  }
+
+  // if (document.getElementById("title")) {
+  //   if (document.getElementById("title").getAttribute("data-page") == "index") {
+  //     load_post("all");
+  //   } else {
+  //     load_post("following");
+  //   }
+  // } else {
+  //   load_follow();
+  //   load_post("id");
+  // }
 });
 
 function create_post(event) {
@@ -26,7 +59,7 @@ function create_post(event) {
   let user = document.querySelector("#form-user").value;
   let text = document.querySelector("#form-text").value;
 
-  fetch("/posts", {
+  fetch("/create/", {
     method: "POST",
     body: JSON.stringify({
       user: user,
@@ -34,10 +67,8 @@ function create_post(event) {
     }),
   })
     .then((response) => response.json())
-    .then((result) => {
-      document.querySelector("#form-text").value = "";
-      document.querySelector("#display").innerHTML = "";
-      load_post("all");
+    .then(() => {
+      return (window.location.href = "");
     });
 }
 
@@ -45,8 +76,11 @@ function load_post(post_cat) {
   let posts = [];
   let data, values, profileID, userID;
 
-  if (document.getElementById("display").getAttribute("data-info")) {
+  if (
+    document.getElementById("display").getAttribute("data-info") !== "|None"
+  ) {
     data = document.getElementById("display").getAttribute("data-info");
+    console.log(data);
     values = data.split("|");
     profileID = parseInt(values[0], 10);
     userID = parseInt(values[1], 10);
@@ -131,6 +165,10 @@ function editPost(post_id) {
   const oldElement = document.getElementById(`post-text-${post_id}`);
   const button = document.getElementById(`post-button-${post_id}`);
   const newButton = document.createElement("button");
+  const time = document.getElementById(`post-time-${post_id}`);
+  const post = document.getElementById(post_id);
+
+  post.insertBefore(time, oldElement);
 
   newElement.value = oldElement.innerHTML;
   newElement.id = `post-textarea-${post_id}`;
@@ -163,10 +201,12 @@ function savePost(post_id, text) {
 
   const textArea = document.getElementById(`post-textarea-${post_id}`);
   const saveButton = document.getElementById(`post-save-${post_id}`);
+  const post = document.getElementById(post_id);
+  const time = document.getElementById(`post-time-${post_id}`);
 
   const editButton = document.createElement("button");
   editButton.className = "edit-button post-element";
-  editButton.id = `post-button-${post.id}`;
+  editButton.id = `post-button-${post_id}`;
   editButton.innerHTML = "Edit";
   editButton.addEventListener("click", () => editPost(post_id));
 
@@ -175,7 +215,8 @@ function savePost(post_id, text) {
   post_text.id = `post-text-${post_id}`;
   post_text.innerHTML = text;
 
-  textArea.parentNode.replaceChild(editButton, textArea);
+  textArea.remove();
+  post.insertBefore(editButton, time);
   saveButton.parentNode.replaceChild(post_text, saveButton);
 
   const buttons = document.getElementsByClassName("edit-button");
@@ -185,7 +226,7 @@ function savePost(post_id, text) {
 }
 
 function change_follow() {
-  const data = document.getElementById("username").getAttribute("data-info");
+  const data = document.getElementById("display").getAttribute("data-info");
   const values = data.split("|");
   const profileID = parseInt(values[0], 10);
   const userID = parseInt(values[1], 10);
@@ -274,13 +315,16 @@ async function likeChange(user_id, post_id) {
   }).then(() => {
     document.getElementById(`like-count-${post_id}`).innerHTML = likes.length;
 
-    let appearance = document.getElementById(
-      `like-button-${post_id}`
-    ).className;
+    let appearance = document
+      .getElementById(`like-button-${post_id}`)
+      .className.replace(" like-button", "");
+
     if (appearance == "fa-regular fa-heart") {
+      console.log("1");
       document.getElementById(`like-button-${post_id}`).className =
         "fa-solid fa-heart";
     } else {
+      console.log("1");
       document.getElementById(`like-button-${post_id}`).className =
         "fa-regular fa-heart";
     }
