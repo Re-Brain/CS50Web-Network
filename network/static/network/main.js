@@ -85,21 +85,32 @@ function load_post(post_cat) {
       text.innerHTML = post.text;
 
       const like = document.createElement("p");
+      like.id = `like-count-${post.id}`;
       like.className = "post-element";
-      like.innerHTML = post.like;
+      like.innerHTML = post.like_count;
 
-      const button = document.createElement("button");
-      button.className = "edit-button post-element";
-      button.innerHTML = "Edit";
-      button.id = `post-button-${post.id}`;
-      button.addEventListener("click", () => editPost(post.id));
+      const likeButton = document.createElement("i");
+      likeButton.className = post.like.includes(userID)
+        ? "fa-solid fa-heart"
+        : "fa-regular fa-heart";
+      likeButton.id = `like-button-${post.id}`;
+      likeButton.addEventListener("click", () => {
+        likeChange(userID, post.id);
+      });
+
+      const editButton = document.createElement("button");
+      editButton.className = "edit-button post-element";
+      editButton.innerHTML = "Edit";
+      editButton.id = `post-button-${post.id}`;
+      editButton.addEventListener("click", () => editPost(post.id));
 
       container.appendChild(header);
       if (post.user_id == userID) {
-        container.appendChild(button);
+        container.appendChild(editButton);
       }
       container.appendChild(text);
       container.appendChild(time);
+      container.appendChild(likeButton);
       container.appendChild(like);
 
       document.querySelector("#display").append(container);
@@ -147,7 +158,7 @@ function savePost(post_id, text) {
 
   const editButton = document.createElement("button");
   editButton.className = "edit-button post-element";
-  editButton.id = "post-button-${post.id}";
+  editButton.id = `post-button-${post.id}`;
   editButton.innerHTML = "Edit";
   editButton.addEventListener("click", () => editPost(post_id));
 
@@ -231,4 +242,39 @@ function load_follow() {
         }
       }
     });
+}
+
+async function likeChange(user_id, post_id) {
+  const post = await fetch(`/post/${post_id}`);
+  const result = await post.json();
+
+  if (result.like.includes(user_id)) {
+    likes = result.like.filter((like) => like !== user_id);
+    console.log("1");
+  } else {
+    likes = result.like;
+    likes.push(user_id);
+    console.log("0");
+  }
+
+  fetch("/like/", {
+    method: "PUT",
+    body: JSON.stringify({
+      like_list: likes,
+      post_id: post_id,
+    }),
+  }).then(() => {
+    document.getElementById(`like-count-${post_id}`).innerHTML = likes.length;
+
+    let appearance = document.getElementById(
+      `like-button-${post_id}`
+    ).className;
+    if (appearance == "fa-regular fa-heart") {
+      document.getElementById(`like-button-${post_id}`).className =
+        "fa-solid fa-heart";
+    } else {
+      document.getElementById(`like-button-${post_id}`).className =
+        "fa-regular fa-heart";
+    }
+  });
 }
