@@ -4,7 +4,7 @@
 {% block body %}
 <main id="list"> 
     <div id="info"">
-        <h1 id="username" data-info="{{data.id}}|{{user.id}}">{{ data.username }}</h1>
+        <h1 id="username">{{ data.username }}</h1>
         <div id="followContainer">
             <h2 class="follow" id="follower_status"></h2>
             <h2 class="follow" id="following_status"></h2>
@@ -13,7 +13,7 @@
             <button class="status" id="follow_status"></button>
         {% endif %}
     </div>
-    <div id="display">
+    <div id="display" data-info="{{data.id}}|{{user.id}}">
     </div>
 </main>
 {% endblock %}

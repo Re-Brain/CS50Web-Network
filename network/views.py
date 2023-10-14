@@ -6,27 +6,27 @@ from django.db import IntegrityError
 from django.http import JsonResponse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.contrib.auth.models import AnonymousUser
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import *
 
 
 def index(request):
-    data = User.objects.get(id=request.user.id)
-    posts = Post.objects.filter(user=request.user).order_by('-time')
-    return render(request, "network/index.html", {"data": data, "posts": posts})
+    if (request.user.is_authenticated):
+        data = User.objects.get(id=request.user.id)
+        return render(request, "network/index.html", {"data": data})
+
+    return render(request, "network/index.html")
 
 
 def following(request):
-    data = User.objects.get(id=request.user.id)
-    posts = Post.objects.filter(user=request.user).order_by('-time')
-    return render(request, "network/following.html.", {"data": data, "posts": posts})
+    return render(request, "network/following.html.")
 
 
 def profile(request, id):
     data = User.objects.get(id=id)
-    posts = Post.objects.filter(user=id).order_by('-time')
-    return render(request, "network/profile.html", {"data": data, "posts": posts})
+    return render(request, "network/profile.html", {"data": data})
 
 
 @csrf_exempt

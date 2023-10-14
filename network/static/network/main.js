@@ -35,7 +35,6 @@ function create_post(event) {
   })
     .then((response) => response.json())
     .then((result) => {
-      console.log(result);
       document.querySelector("#form-text").value = "";
       document.querySelector("#display").innerHTML = "";
       load_post("all");
@@ -46,33 +45,34 @@ function load_post(post_cat) {
   let posts = [];
   let data, values, profileID, userID;
 
-  if (post_cat == "all") {
-    posts = fetch(`/posts/all`).then((response) => response.json());
+  if (document.getElementById("display").getAttribute("data-info")) {
     data = document.getElementById("display").getAttribute("data-info");
     values = data.split("|");
     profileID = parseInt(values[0], 10);
     userID = parseInt(values[1], 10);
+  }
+
+  if (post_cat == "all") {
+    posts = fetch(`/posts/all`).then((response) => response.json());
   } else if (post_cat == "following") {
     posts = fetch(`/posts/following`).then((response) => response.json());
   } else {
-    data = document.getElementById("username").getAttribute("data-info");
-    values = data.split("|");
-    profileID = parseInt(values[0], 10);
-    userID = parseInt(values[1], 10);
-
     posts = fetch(`/posts/${profileID}`).then((response) => response.json());
   }
-
-  console.log(posts);
 
   posts.then((posts) => {
     for (const post of posts) {
       const container = document.createElement("div");
       container.className = "post";
 
-      const header = document.createElement("a");
+      if (data === undefined || data === null) {
+        var header = document.createElement("h3");
+      } else {
+        var header = document.createElement("a");
+        header.href = `/profile/${post.user_id}`;
+      }
+
       header.className = "post-header";
-      header.href = `/profile/${post.user_id}`;
       header.innerHTML = post.user;
 
       const time = document.createElement("p");
@@ -89,14 +89,22 @@ function load_post(post_cat) {
       like.className = "post-element";
       like.innerHTML = post.like_count;
 
-      const likeButton = document.createElement("i");
-      likeButton.className = post.like.includes(userID)
-        ? "fa-solid fa-heart"
-        : "fa-regular fa-heart";
+      var likeButton = document.createElement("i");
       likeButton.id = `like-button-${post.id}`;
-      likeButton.addEventListener("click", () => {
-        likeChange(userID, post.id);
-      });
+
+      if (data === undefined || data === null) {
+        likeButton.className = "fa-regular fa-heart";
+        likeButton.addEventListener("click", () => {
+          return (window.location.href = "login");
+        });
+      } else {
+        likeButton.className = post.like.includes(userID)
+          ? "fa-solid fa-heart"
+          : "fa-regular fa-heart";
+        likeButton.addEventListener("click", () => {
+          likeChange(userID, post.id);
+        });
+      }
 
       const editButton = document.createElement("button");
       editButton.className = "edit-button post-element";
@@ -105,7 +113,7 @@ function load_post(post_cat) {
       editButton.addEventListener("click", () => editPost(post.id));
 
       container.appendChild(header);
-      if (post.user_id == userID) {
+      if (post.user_id == userID && (data !== undefined || data !== null)) {
         container.appendChild(editButton);
       }
       container.appendChild(text);
@@ -214,7 +222,7 @@ function change_follow() {
 }
 
 function load_follow() {
-  const data = document.getElementById("username").getAttribute("data-info");
+  const data = document.getElementById("display").getAttribute("data-info");
   const values = data.split("|");
   const profileID = parseInt(values[0], 10);
   const userID = parseInt(values[1], 10);
