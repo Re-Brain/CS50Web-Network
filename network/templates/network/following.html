@@ -1,56 +1,21 @@
-{% extends "network/layout.html" %} {% load static %} {% block body %}
-<h1 class="title" data-page="following" id="title">Following</h1>
-<main id="list">
-  <div id="display" data-info="{{data.id}}|{{user.id}}">
-    {% for post in posts %}
-    <div class="post" id="{{ post.id }}">
-      {% if user.is_authenticated %}
-      <a href="/profile/{{ post.user_id }}" class="post-header"
-        >{{ post.user }}</a
-      >
-      {% else %}
-      <h3 class="post-header">{{ post.user }}</h3>
-      {% endif %} {% if user.is_authenticated and post.user == user %}
-      <button
-        class="edit-button post-element"
-        id="post-button-{{ post.id }}"
-        data-edit-id="{{ post.id }}"
-      >
-        Edit
-      </button>
-      {% endif %}
+{% extends "network/layout.html" %} 
+{% load static %} 
 
-      <p class="post-element post-time" id="post-time-{{ post.id }}">
-        {{ post.time }}
-      </p>
-      <p class="post-element" id="post-text-{{ post.id }}">{{ post.text }}</p>
-
-      <i
-        id="like-button-{{ post.id }}"
-        data-like-id="{{ user.id }}|{{ post.id }}"
-        class="{% if user in post.like.all %}fa-solid fa-heart{% else %}fa-regular fa-heart{% endif %} like-button"
-      ></i>
-
-      <p id="like-count-{{ post.id }}" class="post-element">
-        {{ post.like.count }}
-      </p>
+{% block body %}
+  <main id="main">
+    <h1 class="title" data-page="following" id="title">Following</h1>
+    <div id="display" data-info="{{data.id}}|{{user.id}}">
+    {% if venues %}
+      {% include "network/display.html" %}
+    {% else %}
+        <h1 id="message">You haven't follow anyone</h1>
+    {% endif %}
     </div>
-    {% endfor %}
-  </div>
 
-  {% if venues.has_previous %}
-    <a href="?page1">&laquo First</a>
-    <a href="?page={{ venues.previous_page_number }}">Previous</a>
-  {% endif %} 
-  
-  Page {{ venues.number}} of {{ venues.paginator.num_pages }} 
-  
-  {% if venues.has_next %}
-    <a href="?page={{ venues.next_page_number }}">Next</a>
-    <a href="?page={{ venues.paginator.num_pages }}">Last &raquo</a>
-  {% endif %}
-</main>
+    {% include "network/nav.html" %}   
+  </main>
+{% endblock %} 
 
-{% endblock %} {% block script %}
-<script src="{% static 'network/main.js' %}"></script>
+{% block script %}
+  <script src="{% static 'network/main.js' %}"></script>
 {% endblock%}

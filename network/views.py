@@ -32,7 +32,7 @@ def following(request):
     posts = Post.objects.filter(user__in=followers)
     posts = posts.order_by("-time").all()
 
-    paginator = Paginator(posts, 2)
+    paginator = Paginator(posts, 1)
     page_number = request.GET.get('page')
     venues = paginator.get_page(page_number)
 
@@ -45,7 +45,7 @@ def profile(request, id):
     posts = Post.objects.filter(user=id)
     posts = posts.order_by("-time").all()
 
-    paginator = Paginator(posts, 2)
+    paginator = Paginator(posts, 1)
     page_number = request.GET.get('page')
     venues = paginator.get_page(page_number)
 
@@ -100,8 +100,6 @@ def post_id(request, id):
 def edit_post(request, id):
     post = Post.objects.get(id=id)
     data = json.loads(request.body)
-
-    print(data)
 
     post.text = data.get("text")
     post.save()

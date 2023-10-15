@@ -131,13 +131,30 @@ table {
 }
 
 /* index.html && following.html*/
+#title
+{
+  font-weight: bold;
+  font-size: 40px;
+  margin-bottom: 15px;
+}
 
-#list {
+#main {
   padding: 2%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+#message
+{
+  font-weight: bold;
+  font-size: 50px;
+}
+
+#nav
+{
+  width: 75%
 }
 
 #newPost {
@@ -225,6 +242,7 @@ table {
 {
   margin-bottom: 5px;
   border-radius: 10px;
+  padding: 10px;
   resize: none;
 }
 
@@ -240,6 +258,11 @@ table {
 
 .post-time {
   color: gray;
+}
+
+.disabled {
+  pointer-events: none;
+  color: gray; /* You can apply any other styling to show it's disabled */
 }
 
 #info

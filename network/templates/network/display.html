@@ -1,0 +1,23 @@
+{% for post in venues %}
+        <div class="post" id="{{ post.id }}">
+          {% if user.is_authenticated %}
+            <a href="/profile/{{ post.user_id }}" class="post-header">{{ post.user }}</a>
+          {% else %}
+            <h3 class="post-header">{{ post.user }}</h3>
+          {% endif %} 
+          
+          {% if user.is_authenticated and post.user == user %}
+            <button class="edit-button post-element" id="post-button-{{ post.id }}" data-edit-id="{{ post.id }}">Edit</button>
+          {% endif %}
+
+          <p class="post-element post-time" id="post-time-{{ post.id }}">{{ post.time }}</p>
+          <p class="post-element" id="post-text-{{ post.id }}">{{ post.text }}</p>
+
+          <i id="like-button-{{ post.id }}" data-like-id="{{ user.id }}|{{ post.id }}"
+            class="{% if user in post.like.all %}fa-solid fa-heart{% else %}fa-regular fa-heart{% endif %} like-button"
+          >
+          </i>
+
+          <p id="like-count-{{ post.id }}" class="post-element">{{ post.like.count }} </p>
+        </div>
+      {% endfor %}

@@ -37,21 +37,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  if(document.getElementById("title") == null)
-  {
+  if (document.getElementById("title") == null) {
     load_follow();
   }
-
-  // if (document.getElementById("title")) {
-  //   if (document.getElementById("title").getAttribute("data-page") == "index") {
-  //     load_post("all");
-  //   } else {
-  //     load_post("following");
-  //   }
-  // } else {
-  //   load_follow();
-  //   load_post("id");
-  // }
 });
 
 function create_post(event) {
@@ -72,122 +60,39 @@ function create_post(event) {
     });
 }
 
-function load_post(post_cat) {
-  let posts = [];
-  let data, values, profileID, userID;
-
-  if (
-    document.getElementById("display").getAttribute("data-info") !== "|None"
-  ) {
-    data = document.getElementById("display").getAttribute("data-info");
-    console.log(data);
-    values = data.split("|");
-    profileID = parseInt(values[0], 10);
-    userID = parseInt(values[1], 10);
-  }
-
-  if (post_cat == "all") {
-    posts = fetch(`/posts/all`).then((response) => response.json());
-  } else if (post_cat == "following") {
-    posts = fetch(`/posts/following`).then((response) => response.json());
-  } else {
-    posts = fetch(`/posts/${profileID}`).then((response) => response.json());
-  }
-
-  posts.then((posts) => {
-    for (const post of posts) {
-      const container = document.createElement("div");
-      container.className = "post";
-
-      if (data === undefined || data === null) {
-        var header = document.createElement("h3");
-      } else {
-        var header = document.createElement("a");
-        header.href = `/profile/${post.user_id}`;
-      }
-
-      header.className = "post-header";
-      header.innerHTML = post.user;
-
-      const time = document.createElement("p");
-      time.className = "post-element post-time";
-      time.innerHTML = post.time;
-
-      const text = document.createElement("p");
-      text.className = "post-element";
-      text.id = `post-text-${post.id}`;
-      text.innerHTML = post.text;
-
-      const like = document.createElement("p");
-      like.id = `like-count-${post.id}`;
-      like.className = "post-element";
-      like.innerHTML = post.like_count;
-
-      var likeButton = document.createElement("i");
-      likeButton.id = `like-button-${post.id}`;
-
-      if (data === undefined || data === null) {
-        likeButton.className = "fa-regular fa-heart";
-        likeButton.addEventListener("click", () => {
-          return (window.location.href = "login");
-        });
-      } else {
-        likeButton.className = post.like.includes(userID)
-          ? "fa-solid fa-heart"
-          : "fa-regular fa-heart";
-        likeButton.addEventListener("click", () => {
-          likeChange(userID, post.id);
-        });
-      }
-
-      const editButton = document.createElement("button");
-      editButton.className = "edit-button post-element";
-      editButton.innerHTML = "Edit";
-      editButton.id = `post-button-${post.id}`;
-      editButton.addEventListener("click", () => editPost(post.id));
-
-      container.appendChild(header);
-      if (post.user_id == userID && (data !== undefined || data !== null)) {
-        container.appendChild(editButton);
-      }
-      container.appendChild(text);
-      container.appendChild(time);
-      container.appendChild(likeButton);
-      container.appendChild(like);
-
-      document.querySelector("#display").append(container);
-    }
-  });
-}
-
 function editPost(post_id) {
-  const newElement = document.createElement("textarea");
-  const oldElement = document.getElementById(`post-text-${post_id}`);
-  const button = document.getElementById(`post-button-${post_id}`);
-  const newButton = document.createElement("button");
+  const textArea = document.createElement("textarea");
+  const postText = document.getElementById(`post-text-${post_id}`);
+
+  const editButton = document.getElementById(`post-button-${post_id}`);
+  const saveButton = document.createElement("button");
+
   const time = document.getElementById(`post-time-${post_id}`);
   const post = document.getElementById(post_id);
 
-  post.insertBefore(time, oldElement);
+  post.insertBefore(time, postText);
 
-  newElement.value = oldElement.innerHTML;
-  newElement.id = `post-textarea-${post_id}`;
-  newElement.className = "textarea";
+  textArea.value = postText.innerHTML;
+  textArea.id = `post-textarea-${post_id}`;
+  textArea.className = "textarea";
 
-  newButton.innerHTML = "Save";
-  newButton.id = `post-save-${post_id}`;
-  newButton.className = "save-button";
-  newButton.addEventListener("click", () =>
-    savePost(post_id, newElement.value)
-  );
+  saveButton.innerHTML = "Save";
+  saveButton.id = `post-save-${post_id}`;
+  saveButton.className = "save-button";
+  saveButton.addEventListener("click", () => savePost(post_id, textArea.value));
 
-  oldElement.parentNode.replaceChild(newElement, oldElement);
-  button.remove();
-  newElement.parentElement.insertBefore(newButton, newElement.nextSibling);
+  postText.parentNode.replaceChild(textArea, postText);
+  editButton.remove();
+  textArea.parentElement.insertBefore(saveButton, textArea.nextSibling);
 
-  const buttons = document.getElementsByClassName("edit-button");
-  for (const button of buttons) {
+  const otherEditButtons = document.getElementsByClassName("edit-button");
+  for (const button of otherEditButtons) {
     button.disabled = true;
+  }
+
+  const likeButtons = document.getElementsByClassName("like-button")
+  for (const icon of likeButtons) {
+    icon.classList.add("disabled")
   }
 }
 
@@ -201,7 +106,9 @@ function savePost(post_id, text) {
 
   const textArea = document.getElementById(`post-textarea-${post_id}`);
   const saveButton = document.getElementById(`post-save-${post_id}`);
+
   const post = document.getElementById(post_id);
+  
   const time = document.getElementById(`post-time-${post_id}`);
 
   const editButton = document.createElement("button");
@@ -219,9 +126,14 @@ function savePost(post_id, text) {
   post.insertBefore(editButton, time);
   saveButton.parentNode.replaceChild(post_text, saveButton);
 
-  const buttons = document.getElementsByClassName("edit-button");
-  for (const button of buttons) {
+  const otherEditButtons = document.getElementsByClassName("edit-button");
+  for (const button of otherEditButtons) {
     button.disabled = false;
+  }
+
+  const likeButtons = document.getElementsByClassName("like-button")
+  for (const icon of likeButtons) {
+    icon.classList.remove("disabled")
   }
 }
 
