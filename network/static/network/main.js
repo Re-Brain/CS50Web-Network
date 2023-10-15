@@ -37,9 +37,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  if (document.getElementById("title") == null) {
-    load_follow();
-  }
 });
 
 function create_post(event) {
@@ -108,8 +105,19 @@ function savePost(post_id, text) {
   const saveButton = document.getElementById(`post-save-${post_id}`);
 
   const post = document.getElementById(post_id);
+
+  const options = {
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+};
   
   const time = document.getElementById(`post-time-${post_id}`);
+  const currentTime = new Date()
+  time.innerHTML = new Intl.DateTimeFormat('en-US', options).format(currentTime)
 
   const editButton = document.createElement("button");
   editButton.className = "edit-button post-element";
@@ -138,12 +146,9 @@ function savePost(post_id, text) {
 }
 
 function change_follow() {
-  const data = document.getElementById("display").getAttribute("data-info");
-  const values = data.split("|");
-  const profileID = parseInt(values[0], 10);
-  const userID = parseInt(values[1], 10);
-
-  console.log(userID, profileID);
+  const data = document.getElementById("display").getAttribute("data-info").split("|");
+  const profileID = parseInt(data[0], 10);
+  const userID = parseInt(data[1], 10);
 
   const fetchPromise = [
     fetch(`/user/${profileID}`).then((response) => response.json()),
@@ -170,15 +175,14 @@ function change_follow() {
       }),
     });
 
-    load_follow();
+    load_follow()
   });
 }
 
 function load_follow() {
-  const data = document.getElementById("display").getAttribute("data-info");
-  const values = data.split("|");
-  const profileID = parseInt(values[0], 10);
-  const userID = parseInt(values[1], 10);
+  const data = document.getElementById("display").getAttribute("data-info").split("|");
+  const profileID = parseInt(data[0], 10);
+  const userID = parseInt(data[1], 10);
 
   fetch(`/user/${profileID}`)
     .then((response) => response.json())
@@ -186,9 +190,6 @@ function load_follow() {
       document.querySelector(
         "#follower_status"
       ).innerHTML = `Follower ${result.follower_count}`;
-      document.querySelector(
-        "#following_status"
-      ).innerHTML = `Following ${result.following_count}`;
 
       if (
         document.querySelector("#follow_status") &&
