@@ -1,23 +1,36 @@
 {% extends "network/layout.html" %} 
-{% load static %}
+{% load static %} 
 
 {% block body %}
-<main id="list"> 
-    <div id="info"">
-        <h1 id="username" data-info="{{data.id}}|{{user.id}}">{{ data.username }}</h1>
-        <div id="followContainer">
-            <h2 class="follow" id="follower_status"></h2>
-            <h2 class="follow" id="following_status"></h2>
-        </div>
-        {% if user != data %}
-            <button class="status" id="follow_status"></button>
+  <main id="main">
+    <div id="info">
+      <h1 id="username">{{ profile.username }}</h1>
+      <div id="followContainer">
+        <h2 class="follow" id="follower_status">Follower {{ profile.follower.count }}</h2>
+        <h2 class="follow" id="following_status">Following {{ profile.following.count }}</h2>
+      </div>
+
+      {% if user != profile %}
+        {% if user in profile.follower.all %}
+          <button class="status" id="follow_status">Unfollow</button>
+        {% else %}
+          <button class="status" id="follow_status">Follow</button>
         {% endif %}
+      {% endif %}
     </div>
-    <div id="display">
+
+    <div id="display" data-info="{{profile.id}}|{{user.id}}">
+      {% if venues %}
+          {% include "network/display.html" %}
+      {% else %}
+          <h1 id="message">You haven't post anything</h1>
+      {% endif %}
     </div>
-</main>
-{% endblock %}
+
+    {% include "network/nav.html" %}       
+  </main>
+{% endblock %} 
 
 {% block script %}
-    <script src="{% static 'network/main.js' %}"></script>
+  <script src="{% static 'network/main.js' %}"></script>
 {% endblock%}

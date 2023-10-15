@@ -1,15 +1,21 @@
 {% extends "network/layout.html" %} 
-{% load static %}
+{% load static %} 
 
 {% block body %}
-<h1 class="title" data-page="following" id="title">Following</h1>
-<main id="list"> 
+  <main id="main">
+    <h1 class="title" data-page="following" id="title">Following</h1>
     <div id="display">
+    {% if venues %}
+      {% include "network/display.html" %}
+    {% else %}
+        <h1 id="message">You haven't follow anyone</h1>
+    {% endif %}
     </div>
-</main>
 
+    {% include "network/nav.html" %}   
+  </main>
+{% endblock %} 
 
-{% endblock %}
 {% block script %}
-    <script src="{% static 'network/main.js' %}"></script>
+  <script src="{% static 'network/main.js' %}"></script>
 {% endblock%}

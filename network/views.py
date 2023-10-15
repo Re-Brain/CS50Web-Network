@@ -6,27 +6,43 @@ from django.db import IntegrityError
 from django.http import JsonResponse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 
 from .models import *
 
 
 def index(request):
-    data = User.objects.get(id=request.user.id)
-    posts = Post.objects.filter(user=request.user).order_by('-time')
-    return render(request, "network/index.html", {"data": data, "posts": posts})
+    posts = Post.objects.order_by("-time").all()
+
+    paginator = Paginator(posts, 2)
+    page_number = request.GET.get('page')
+    venues = paginator.get_page(page_number)
+
+    return render(request, "network/index.html", {"venues": venues})
 
 
 def following(request):
-    data = User.objects.get(id=request.user.id)
-    posts = Post.objects.filter(user=request.user).order_by('-time')
-    return render(request, "network/following.html.", {"data": data, "posts": posts})
+    followers = User.objects.filter(id=request.user.id).values('following')
+    posts = Post.objects.order_by("-time").filter(user__in=followers)
+    
+    paginator = Paginator(posts, 2)
+    page_number = request.GET.get('page')
+    venues = paginator.get_page(page_number)
+
+    return render(request, "network/following.html.", {"venues": venues})
 
 
 def profile(request, id):
-    data = User.objects.get(id=id)
-    posts = Post.objects.filter(user=id).order_by('-time')
-    return render(request, "network/profile.html", {"data": data, "posts": posts})
+    profile = User.objects.get(id=id)
+    posts = Post.objects.order_by("-time").filter(user=id)
+
+    paginator = Paginator(posts, 2)
+    page_number = request.GET.get('page')
+    venues = paginator.get_page(page_number)
+
+    return render(request, "network/profile.html", {"profile": profile , "venues": venues})
 
 
 @csrf_exempt
@@ -68,7 +84,7 @@ def change_follow(request, profile_id, user_id):
 
 
 @csrf_exempt
-def post_id(request, id):
+def load_post(request, id):
     post = Post.objects.get(id=id)
     return JsonResponse(post.serialize(), safe=False)
 
@@ -78,9 +94,8 @@ def edit_post(request, id):
     post = Post.objects.get(id=id)
     data = json.loads(request.body)
 
-    print(data)
-
     post.text = data.get("text")
+    post.time = timezone.now()
     post.save()
 
     return HttpResponse(status=204)
@@ -90,25 +105,6 @@ def edit_post(request, id):
 def load_profile(request, id):
     user = User.objects.get(id=id)
     return JsonResponse(user.serialize(), safe=False)
-
-
-@csrf_exempt
-def load_post(request, post_cat):
-    print(post_cat)
-    if post_cat == "all":
-        posts = Post.objects.all()
-    elif post_cat == "following":
-        followers = User.objects.filter(id=request.user.id).values('following')
-        posts = Post.objects.filter(user__in=followers)
-    elif int(post_cat):
-        posts = Post.objects.filter(user=int(post_cat))
-    else:
-        return JsonResponse({"error": "Invalid mailbox."}, status=400)
-
-    # return emails in reverse chronological order
-    posts = posts.order_by("-time").all()
-    return JsonResponse([post.serialize() for post in posts], safe=False)
-
 
 @csrf_exempt
 @login_required
