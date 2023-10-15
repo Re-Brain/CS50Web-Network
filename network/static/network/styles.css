@@ -130,7 +130,11 @@ table {
   border-spacing: 0;
 }
 
-/* index.html && following.html*/
+#nav-title
+{
+  font-size: 20px;
+}
+
 #title
 {
   font-weight: bold;
@@ -308,4 +312,19 @@ table {
   background: lightblue;
   padding: 10px 20px;
   margin-top: 10px;
+}
+
+#message
+{
+  font-size: 20px;
+}
+
+.form-input
+{
+  width: 50%;
+}
+
+.form-space
+{
+  margin-bottom: 10px;
 }

@@ -1,30 +1,33 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
 
-    <h2>Register</h2>
+    <main id="main">
+        <h2 id="title">Register</h2>
 
-    {% if message %}
-        <div>{{ message }}</div>
-    {% endif %}
+        {% if message %}
+            <h2 id="message" class="form-space">{{ message }}</h2>
+        {% endif %}
 
-    <form action="{% url 'register' %}" method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <input class="form-control" autofocus type="text" name="username" placeholder="Username">
-        </div>
-        <div class="form-group">
-            <input class="form-control" type="email" name="email" placeholder="Email Address">
-        </div>
-        <div class="form-group">
-            <input class="form-control" type="password" name="password" placeholder="Password">
-        </div>
-        <div class="form-group">
-            <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
-        </div>
-        <input class="btn btn-primary" type="submit" value="Register">
-    </form>
+        <form action="{% url 'register' %}" method="post" id="display">
+            {% csrf_token %}
+            <div class="form-group form-input">
+                <input class="form-control" autofocus type="text" name="username" placeholder="Username">
+            </div>
+            <div class="form-group form-input">
+                <input class="form-control" type="email" name="email" placeholder="Email Address">
+            </div>
+            <div class="form-group form-input">
+                <input class="form-control" type="password" name="password" placeholder="Password">
+            </div>
+            <div class="form-group form-input">
+                <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
+            </div>
+            <input class="btn btn-primary form-space" type="submit" value="Register">
+        </form>
 
-    Already have an account? <a href="{% url 'login' %}">Log In here.</a>
-
+        <h2 id="message" class="form-space">Already have an account?</h2>
+        <a href="{% url 'login' %}">Log In here.</a>
+    </main>
 {% endblock %}

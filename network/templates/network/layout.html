@@ -19,37 +19,37 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="#">Network</a>
+      <a class="navbar-brand" id="nav-title" href="{% url 'index' %}">Network</a>
 
       <div>
         <ul class="navbar-nav mr-auto">
           {% if user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'profile' id=user.id %}"
+            <a class="nav-link" id="nav-title" href="{% url 'profile' id=user.id %}"
               ><strong>{{ user.username }}</strong></a
             >
           </li>
           {% endif %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'index' %}" id="allPost"
+            <a class="nav-link" id="nav-title" href="{% url 'index' %}" id="allPost"
               >All Posts</a
             >
           </li>
           {% if user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'following' %}" id="following"
+            <a class="nav-link" id="nav-title" href="{% url 'following' %}" id="following"
               >Following</a
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+            <a class="nav-link" id="nav-title" href="{% url 'logout' %}">Log Out</a>
           </li>
           {% else %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'login' %}">Log In</a>
+            <a class="nav-link" id="nav-title" href="{% url 'login' %}">Log In</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'register' %}">Register</a>
+            <a class="nav-link" id="nav-title" href="{% url 'register' %}">Register</a>
           </li>
           {% endif %}
         </ul>
