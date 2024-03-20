@@ -16,7 +16,7 @@ from .models import *
 def index(request):
     posts = Post.objects.order_by("-time").all()
 
-    paginator = Paginator(posts, 2)
+    paginator = Paginator(posts, 10)
     page_number = request.GET.get('page')
     venues = paginator.get_page(page_number)
 
@@ -27,7 +27,7 @@ def following(request):
     followers = User.objects.filter(id=request.user.id).values('following')
     posts = Post.objects.order_by("-time").filter(user__in=followers)
     
-    paginator = Paginator(posts, 2)
+    paginator = Paginator(posts, 10)
     page_number = request.GET.get('page')
     venues = paginator.get_page(page_number)
 
@@ -38,7 +38,7 @@ def profile(request, id):
     profile = User.objects.get(id=id)
     posts = Post.objects.order_by("-time").filter(user=id)
 
-    paginator = Paginator(posts, 2)
+    paginator = Paginator(posts, 10)
     page_number = request.GET.get('page')
     venues = paginator.get_page(page_number)
 
